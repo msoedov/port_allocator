@@ -12,7 +12,9 @@ services_schema = t.List(t.Dict(components=t.List(t.Dict(name=t.String,
                                 name=t.String,
                                 num_ports=t.Int(gte=1)))
 
+extact_ports = lambda x: tuple(map(int, x.group(0).split('-')))
+
 data_schema = t.Dict(
-    ports=t.Dict(available_ranges=t.List(t.String(regex='\d+\-\d+')),
+    ports=t.Dict(available_ranges=t.List(t.String(regex='\d+\-\d+') >> extact_ports),
                  base=t.Int(gte=1)),
     services=services_schema)

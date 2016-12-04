@@ -23,7 +23,8 @@ def process(data_file):
                      color='red') for coll in collisions]
     services = list(map(rearrange_port, services))
     base = data['ports']['base']
-    port_ranges = [range(pair[0] + base, pair[1] + base) for pair in data['ports']['available_ranges']]
+    port_ranges = [range(pair[0] + base, pair[1] + base)
+                   for pair in data['ports']['available_ranges']]
     ports = sum(map(list, port_ranges), [])
     errs = assign_ports(services=services, ports=ports)
     if errs:
@@ -32,7 +33,8 @@ def process(data_file):
 
     with open(DEST_FILENAME, 'w') as n:
         n.write(nginx_tpl.render(services=services))
-    click.secho('File: {} has been created!'.format(DEST_FILENAME), color='green')
+    click.secho('File: {} has been created!'.format(DEST_FILENAME),
+                color='green')
 
 
 def skip_duplicated_ports(services):

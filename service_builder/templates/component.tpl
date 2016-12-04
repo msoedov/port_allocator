@@ -1,0 +1,1 @@
+Component {{ c.name }} working with port {{ c.port }}

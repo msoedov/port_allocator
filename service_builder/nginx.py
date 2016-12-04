@@ -1,6 +1,9 @@
 from jinja2 import Environment, PackageLoader
 
 
-env = Environment(loader=PackageLoader('service_builder', 'templates'))
+env = Environment(loader=PackageLoader('nginx', 'templates'))
 
-nginx = env.get_template('nginx.tpl')
+nginx_tpl = env.get_template('nginx.tpl')
+
+
+__all__ = ('nginx_tpl', )

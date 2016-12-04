@@ -2,6 +2,11 @@ import click
 from trafaret_config import ConfigError, read_and_validate
 
 from validators import data_schema
+from nginx import nginx_tpl
+
+__all__ = ('process', )
+
+DEST_FILENAME = 'nginx.conf'
 
 
 def process(data_file):
@@ -17,6 +22,17 @@ def process(data_file):
         [click.secho('Warning: {0}:{1}.{2} port={3}'.format(*coll),
                      color='red') for coll in collisions]
     services = list(map(rearrange_port, services))
+    base = data['ports']['base']
+    port_ranges = [range(pair[0] + base, pair[1] + base) for pair in data['ports']['available_ranges']]
+    ports = sum(map(list, port_ranges), [])
+    errs = assign_ports(services=services, ports=ports)
+    if errs:
+        [click.secho('Port has not been allocated for : {0}:{1}'.format(*er),
+                     color='red') for er in errs]
+
+    with open(DEST_FILENAME, 'w') as n:
+        n.write(nginx_tpl.render(services=services))
+    click.secho('File: {} has been created!'.format(DEST_FILENAME), color='green')
 
 
 def skip_duplicated_ports(services):
@@ -28,7 +44,7 @@ def skip_duplicated_ports(services):
         port: 4
     It should return list of duplicated ports
     :param services:
-    :return:
+    :return: List of port collision as a list(('services', service_name, component_name, port))
     """
     collisions = []
     for service in services:
@@ -66,13 +82,13 @@ def rearrange_port(service):
       name: Uncriticised
       num_ports: 2
 
-    :param service:
-    :return:
+    :param service:  single entry of services spec
+    :return: modified service spec
     >>> rearrange_port({'components': [{'port': 1, 'name': 'Namesake'}], 'name': 'Jumpiness', 'num_ports': 10}) \
-    == {'components': [{'port': 1, 'name': 'Namesake'}], 'name': 'Jumpiness', 'num_ports': 1}
+    == {'components': [{'port': 1, 'name': 'Namesake'}], 'name': 'Jumpiness', 'num_ports': 2}
     True
     >>> rearrange_port({'components': [{'port': 7, 'name': 'Namesake'}], 'name': 'Jumpiness', 'num_ports': 10}) \
-    == {'components': [{'port': 1, 'name': 'Namesake'}], 'name': 'Jumpiness', 'num_ports': 1}
+    == {'components': [{'port': 1, 'name': 'Namesake'}], 'name': 'Jumpiness', 'num_ports': 2}
     True
     """
     components = [c for c in service.get('components', []) if 'skip' not in c]
@@ -80,5 +96,26 @@ def rearrange_port(service):
     service['components'] = components
     for i, component in enumerate(components):
         component['port'] = i + 1
-    service['num_ports'] = num_ports
+    service['num_ports'] = num_ports + 1  # 0 port for service
     return service
+
+
+def assign_ports(services, ports):
+    iport = iter(ports)
+    errors = []
+    for service in services:
+        try:
+            available_port = next(iport)
+        except StopIteration:
+            errors.append((service['name'], ''))
+            continue
+        service['service_port'] = available_port
+        for component in service.get('components', []):
+            try:
+                available_port = next(iport)
+            except StopIteration:
+                errors.append((service['name'], component['name']))
+                continue
+            component['port'] = available_port
+
+    return errors

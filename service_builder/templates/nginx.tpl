@@ -1,10 +1,25 @@
+events {
+    worker_connections  1024;
+}
 
+worker_processes  1;
+
+http {
 {% for item in services %}
-  server { # simple reverse-proxy
-    listen       {{port}};
-    location / {
-      return 200 '{{name}}';
+    server {
+        listen       {{ item.service_port }};
+        location / {
+            return 200 '{% include "service.tpl" ignore missing %}';
+        }
     }
-  }
+    {% for c in item.components %}
+            server {
+                listen       {{ c.port }};
+                location / {
+                    return 200 '{% include "component.tpl" ignore missing %}';
+                }
+            }
+    {% endfor %}
 
 {% endfor %}
+}

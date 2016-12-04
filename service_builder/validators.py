@@ -1,6 +1,4 @@
-import sys
 import trafaret as t
-from trafaret_config import ConfigError, read_and_validate
 
 # services:
 # - components:
@@ -12,7 +10,7 @@ from trafaret_config import ConfigError, read_and_validate
 services_schema = t.List(t.Dict(components=t.List(t.Dict(name=t.String,
                                                          port=t.Int(gte=1))),
                                 name=t.String,
-                                port=t.Int(gte=1)))
+                                num_ports=t.Int(gte=1)))
 
 data_schema = t.Dict(
     ports=t.Dict(available_ranges=t.List(t.String(regex='\d+\-\d+')),

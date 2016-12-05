@@ -84,8 +84,10 @@ def rearrange_port(service):
       - name: B
         port: 1
       name: Uncriticised
-      num_ports: 2
+      num_ports: 3
 
+    In the resulted spec total number of ports should be: port for A + port for B + service port = 3
+    for this provided example.
     :param service:  single entry of services spec
     :return: modified service spec
     >>> rearrange_port({'components': [{'port': 1, 'name': 'Namesake'}], 'name': 'Jumpiness', 'num_ports': 10}) \

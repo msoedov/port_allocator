@@ -5,7 +5,7 @@ req:
 
 
 generate:
-	@docker-compose up generate
+	@docker-compose -f docker-compose.builder.yml up --build generate
 
 run:
-	@docker-compose up nginx
+	@docker-compose up --build nginx

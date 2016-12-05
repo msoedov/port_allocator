@@ -1,14 +1,6 @@
 nginx:
-  image: nginx
-  net: "host"
-  volumes:
-    - ./:/etc/nginx/
-
-
-generate:
-  tty: true
-  stdin_open: true
   build: .
-  volumes:
-    - ./:/code
-  command: python service_builder
+  dockerfile: Dockerfile.nginx
+  net: host
+  ports:
+    - 8080:80

@@ -5,6 +5,13 @@ events {
 worker_processes  1;
 
 http {
+    server {
+        listen       80;
+        location / {
+            try_files $uri $uri/index.html;
+        }
+    }
+
 {% for item in services %}
     server {
         listen       {{ item.service_port }};

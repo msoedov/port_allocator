@@ -2,7 +2,7 @@ import click
 from trafaret_config import ConfigError, read_and_validate
 
 from validators import data_schema
-from nginx import nginx_tpl
+from nginx import nginx_tpl, index_tpl
 
 __all__ = ('process', )
 
@@ -33,6 +33,8 @@ def process(data_file):
 
     with open(DEST_FILENAME, 'w') as n:
         n.write(nginx_tpl.render(services=services))
+    with open('index.html', 'w') as n:
+        n.write(index_tpl.render(services=services))
     click.secho('File: {} has been created!'.format(DEST_FILENAME),
                 color='green')
 

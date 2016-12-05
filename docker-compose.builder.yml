@@ -1,0 +1,7 @@
+generate:
+  tty: true
+  stdin_open: true
+  build: .
+  volumes:
+    - ./:/code
+  command: python service_builder

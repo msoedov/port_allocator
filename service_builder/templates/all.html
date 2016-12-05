@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Services</title>
+
+    </head>
+    <body>
+        {% for item in services %}
+            <div class="">
+
+            Service #{{item.name}} at http://127.0.0.1:{{ item.service_port }};
+
+            {% for c in item.components %}
+                <div class="">
+                Component {{ c.name }} working with port http://127.0.0.1:{{ c.port }}
+                </div>
+            {% endfor %}
+            </div>
+        {% endfor %}
+    </body>
+</html>

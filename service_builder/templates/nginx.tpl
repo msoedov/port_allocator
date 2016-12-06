@@ -7,8 +7,18 @@ worker_processes  1;
 http {
     server {
         listen       80;
+        root /usr/share/nginx/html;
+        index index.html index.htm;
+
+        # Make site accessible from http://localhost/
+        server_name localhost;
+
         location / {
-            try_files $uri $uri/index.html;
+                # First attempt to serve request as file, then
+                # as directory, then fall back to displaying a 404.
+                try_files $uri $uri/ /index.html;
+                # Uncomment to enable naxsi on this location
+                # include /etc/nginx/naxsi.rules
         }
     }
 

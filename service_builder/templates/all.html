@@ -9,11 +9,11 @@
         {% for item in services %}
             <div class="">
 
-            Service #{{item.name}} at <a href="http://127.0.0.1:{{ item.service_port }}">http://127.0.0.1:{{ item.service_port }}</a>;
+            Service #{{item.name}} at <a href="http://{{ host }}:{{ item.service_port }}">http://{{ host }}:{{ item.service_port }}</a>;
 
             {% for c in item.components %}
                 <p class="">
-                Component {{ c.name }} working with port <a href="http://127.0.0.1:{{ c.port }}">http://127.0.0.1:{{ c.port }}</a>
+                Component {{ c.name }} working with port <a href="http://{{ host }}:{{ c.port }}">http://{{ host }}:{{ c.port }}</a>
                 </p>
             {% endfor %}
             </div>

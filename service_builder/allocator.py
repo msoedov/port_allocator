@@ -9,7 +9,7 @@ __all__ = ('process', )
 DEST_FILENAME = 'nginx.conf'
 
 
-def process(data_file):
+def process(data_file, host):
     try:
         data = read_and_validate(data_file, data_schema)
     except ConfigError as e:
@@ -32,9 +32,9 @@ def process(data_file):
                      color='red') for er in errs]
 
     with open(DEST_FILENAME, 'w') as n:
-        n.write(nginx_tpl.render(services=services))
+        n.write(nginx_tpl.render(services=services, host=host))
     with open('index.html', 'w') as n:
-        n.write(index_tpl.render(services=services))
+        n.write(index_tpl.render(services=services, host=host))
     click.secho('File: {} has been created!'.format(DEST_FILENAME),
                 color='green')
 
